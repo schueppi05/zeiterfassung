@@ -22,6 +22,24 @@ cp .env.example .env.local   # Tenant- und Client-ID eintragen
 npm run dev
 ```
 
-## Offene Architekturentscheidung
+## Architektur (Azure, Region Schweiz)
 
-Persistenz und Backend sind noch nicht gewählt (Hosting-Standort Schweiz/EU, Anbindung an Entra ID). Das Datenmodell ist bewusst unabhängig davon gehalten.
+- Frontend: React/Vite, Anmeldung per MSAL (Entra ID)
+- API: Azure Functions (Node/TypeScript) in `api/`, prüft Entra-Token und Gruppenmitgliedschaft
+- Datenbank: Azure Database for PostgreSQL, Schema in `db/migrations/`
+- Infrastruktur: `infra/main.bicep` (Region `switzerlandnorth`)
+
+### Entra-Konfiguration
+
+- App-Registrierung (Single-Tenant) mit SPA-Plattform und eigenem API-Scope
+- Gruppenanspruch (`groups`) im Token aktivieren
+- Unternehmensanwendung: «Zuweisung erforderlich» = Ja, Sicherheitsgruppe «Zeiterfassung Pfäffikon» zuweisen
+- Die Gruppen-ID kommt als `ENTRA_ALLOWED_GROUP_ID` in die API-Einstellungen
+
+### API lokal
+
+```bash
+cd api
+cp local.settings.example.json local.settings.json
+npm install && npm run build && npm start
+```
