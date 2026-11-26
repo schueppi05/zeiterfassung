@@ -1,0 +1,13 @@
+:root {
+  --navy: #0f4761;
+  --text: #222;
+  --grau: #595959;
+  font-family: Calibri, 'Segoe UI', system-ui, sans-serif;
+  color: var(--text);
+}
+body { margin: 0; background: #f5f6f8; }
+.card { max-width: 860px; margin: 3rem auto; padding: 2rem; background: #fff; border-radius: 8px; }
+h1, h2 { color: var(--navy); }
+header { display: flex; justify-content: space-between; align-items: center; }
+button { background: var(--navy); color: #fff; border: 0; border-radius: 4px; padding: .5rem 1rem; cursor: pointer; }
+code { background: #eef1f4; padding: 0 .3rem; border-radius: 3px; }
