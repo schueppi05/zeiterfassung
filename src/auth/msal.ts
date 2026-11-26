@@ -20,4 +20,8 @@ const config: Configuration = {
 
 export const msalInstance = new PublicClientApplication(config)
 
-export const loginRequest = { scopes: ['openid', 'profile', 'email'] }
+export const apiScopes = [
+  (import.meta.env.VITE_API_SCOPE as string | undefined) || `api://${clientId}/access_as_user`,
+]
+
+export const loginRequest = { scopes: ['openid', 'profile', ...apiScopes] }
