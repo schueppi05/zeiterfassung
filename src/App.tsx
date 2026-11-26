@@ -1,6 +1,11 @@
+import { useState } from 'react'
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from '@azure/msal-react'
+import { api } from './api/client'
 import { authConfigured, loginRequest } from './auth/msal'
-import { ABSENCE_LABELS } from './domain/types'
+import Absenzen from './pages/Absenzen'
+import Freigaben from './pages/Freigaben'
+import Zeiten from './pages/Zeiten'
+import { useLoad } from './useLoad'
 
 function Login() {
   const { instance } = useMsal()
@@ -19,24 +24,46 @@ function Login() {
   )
 }
 
+type Tab = 'zeiten' | 'absenzen' | 'freigaben'
+
 function Home() {
-  const { instance, accounts } = useMsal()
+  const { instance } = useMsal()
+  const me = useLoad(() => api.me(), [])
+  const [tab, setTab] = useState<Tab>('zeiten')
+
+  const darfFreigeben = me.data?.rolle === 'vorgesetzter' || me.data?.rolle === 'admin'
+  const tabs: [Tab, string][] = [
+    ['zeiten', 'Zeiten'],
+    ['absenzen', 'Ferien & Absenzen'],
+    ...(darfFreigeben ? [['freigaben', 'Freigaben'] as [Tab, string]] : []),
+  ]
+
   return (
     <main className="card">
       <header>
         <h1>Zeiterfassung</h1>
         <span>
-          {accounts[0]?.name}{' '}
-          <button onClick={() => instance.logoutRedirect()}>Abmelden</button>
+          {me.data?.name} <button onClick={() => instance.logoutRedirect()}>Abmelden</button>
         </span>
       </header>
-      <p>Angemeldet. Nächste Schritte: Zeiterfassung, Ferien- und Absenzenverwaltung.</p>
-      <h2>Absenztypen</h2>
-      <ul>
-        {Object.values(ABSENCE_LABELS).map((l) => (
-          <li key={l}>{l}</li>
-        ))}
-      </ul>
+      {me.error && (
+        <p className="fehler">
+          Zugriff nicht möglich: {me.error}. Ist die API erreichbar und gehörst du zur Gruppe der
+          Mitarbeitenden Pfäffikon?
+        </p>
+      )}
+      {me.data && (
+        <>
+          <nav>
+            {tabs.map(([k, l]) => (
+              <button key={k} className={k === tab ? 'aktiv' : 'tab'} onClick={() => setTab(k)}>{l}</button>
+            ))}
+          </nav>
+          {tab === 'zeiten' && <Zeiten />}
+          {tab === 'absenzen' && <Absenzen />}
+          {tab === 'freigaben' && darfFreigeben && <Freigaben />}
+        </>
+      )}
     </main>
   )
 }
@@ -44,12 +71,8 @@ function Home() {
 export default function App() {
   return (
     <>
-      <UnauthenticatedTemplate>
-        <Login />
-      </UnauthenticatedTemplate>
-      <AuthenticatedTemplate>
-        <Home />
-      </AuthenticatedTemplate>
+      <UnauthenticatedTemplate><Login /></UnauthenticatedTemplate>
+      <AuthenticatedTemplate><Home /></AuthenticatedTemplate>
     </>
   )
 }
