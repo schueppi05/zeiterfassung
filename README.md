@@ -12,7 +12,7 @@ Grundgerüst: Vite, React, TypeScript, MSAL-Login, Datenmodell (`src/domain`).
 - Ferien und Absenzen mit Antrag und Genehmigung durch Vorgesetzte
 - Ferienkontingent nach Pensum, Saldo-Übersicht
 - Auswertungen und Export
-- Mehrere Nutzer, Rollen: Mitarbeiter, Vorgesetzter, Admin; Gesellschaften PAS und PAMEA
+- Mehrere Nutzer, Rollen: Mitarbeiter, Vorgesetzter, Admin; nur für Mitarbeitende am Standort Pfäffikon (PAS)
 
 ## Entwicklung
 

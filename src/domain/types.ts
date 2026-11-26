@@ -1,7 +1,5 @@
 /** Fachliches Datenmodell der Zeiterfassung. Datumswerte als ISO-String (YYYY-MM-DD). */
 
-export type Entity = 'PAS' | 'PAMEA'
-
 export type Role = 'mitarbeiter' | 'vorgesetzter' | 'admin'
 
 export interface User {
@@ -10,7 +8,6 @@ export interface User {
   entraId: string
   name: string
   email: string
-  entity: Entity
   role: Role
   /** Beschäftigungsgrad in Prozent (z. B. 80) */
   pensum: number
